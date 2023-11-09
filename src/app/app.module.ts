@@ -14,6 +14,8 @@ import {routing} from "./app.routing";
 import {HttpClientModule} from "@angular/common/http";
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
+import { TabListComponent } from './common/components/tab-list/tab-list.component';
+import { TabComponent } from './common/components/tab/tab.component';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import { environment } from '../environments/environment';
     ZipcodeEntryComponent,
     ForecastsListComponent,
     CurrentConditionsComponent,
-    MainPageComponent
+    MainPageComponent,
+    TabListComponent,
+    TabComponent
   ],
   imports: [
     BrowserModule,

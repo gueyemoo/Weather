@@ -1,0 +1,9 @@
+<div class="tabs-container">
+  <ul class="nav nav-tabs">
+    <li *ngFor="let tab of tabs; index as currentTitle" class="tab" [ngClass]="{'active': tab.active === true }" (click)="selectTab(tab)">
+      <p class="title">{{tab.title}}</p>
+      <button class="close-icon" (click)="closeTab($event, currentTitle)">X</button>
+    </li>
+  </ul>
+  <ng-content></ng-content>
+</div>
