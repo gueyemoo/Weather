@@ -16,6 +16,16 @@ export class WeatherService {
 
   constructor(private http: HttpClient) { }
 
+  /**
+  * @description retrieve all the current conditions
+  * @param zipcodes 
+  */
+  loadCurrentConditions(zipcodes: string[]): void {
+    for (let zipcode of zipcodes) {
+      this.addCurrentConditions(zipcode);
+    }
+  }
+
   addCurrentConditions(zipcode: string): void {
     // Here we make a request to get the current conditions data from the API. Note the use of backticks and an expression to insert the zipcode
     this.http.get<CurrentConditions>(`${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`)
