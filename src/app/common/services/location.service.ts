@@ -8,16 +8,15 @@ export class LocationService {
 
   locations : string[] = [];
 
-  //expose three observables to emits zipcodes on changes
+  //expose locations observable to emits zipcodes on any changes
   locations$: BehaviorSubject<string[]> = new BehaviorSubject<string[]>([]);
-  addLocation$: BehaviorSubject<string> = new BehaviorSubject<string>('');
 
   constructor() {
-    // let locString = localStorage.getItem(LOCATIONS);
-    // if (locString) {
-    //   this.locations = JSON.parse(locString);
-    //   this.locations$.next(this.locations);
-    // }
+    let locString = localStorage.getItem(LOCATIONS);
+    if (locString) {
+      this.locations = JSON.parse(locString);
+      this.locations$.next(this.locations);
+    }
   }
 
   addLocation(zipcode : string) {
@@ -26,7 +25,7 @@ export class LocationService {
     }
     this.locations.push(zipcode);
     localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));
-    this.addLocation$.next(zipcode);
+    this.locations$.next(this.locations);
   }
 
   removeLocation(zipcode : string) {

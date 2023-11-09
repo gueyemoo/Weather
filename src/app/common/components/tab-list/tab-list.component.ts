@@ -14,11 +14,11 @@ export class TabListComponent implements AfterContentInit {
   removeTab = new EventEmitter<number>();
 
   ngAfterContentInit() { //TODO: fix using index instead of boolean
-    const activeTabs = this.tabs.filter(tab => tab.active);
+    // const activeTabs = this.tabs.filter(tab => tab.active);
 
-    if (activeTabs.length === 0) {
-      this.selectTab(this.tabs.first);
-    }
+    // if (activeTabs.length === 0) {
+    //   this.selectTab(this.tabs.first);
+    // }
   }
 
   selectTab(tab: TabComponent) {
