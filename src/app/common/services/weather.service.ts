@@ -21,6 +21,7 @@ export class WeatherService {
   * @param zipcodes 
   */
   loadCurrentConditions(zipcodes: string[]): void {
+    this.currentConditions.set([]); // prevent to put again the data on component init
     for (let zipcode of zipcodes) {
       this.addCurrentConditions(zipcode);
     }
