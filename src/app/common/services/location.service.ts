@@ -20,7 +20,7 @@ export class LocationService {
   }
 
   addLocation(zipcode : string) {
-    if (this.locations.indexOf(zipcode) !== -1) {
+    if (this.locations.includes(zipcode)) {
       return alert('Location exist');
     }
     this.locations.push(zipcode);

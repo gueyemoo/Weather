@@ -1,10 +1,13 @@
-import { Injectable, Signal, signal } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable, Signal, inject, signal } from '@angular/core';
+import { Observable, throwError } from 'rxjs';
 
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CurrentConditions } from '../../components/main-page/current-conditions/current-conditions.type';
 import { ConditionsAndZip } from '../types/conditions-and-zip.type';
 import { Forecast } from '../../components/forecasts-list/forecast.type';
+import { StorageService } from './storage.service';
+import { CURRENT_CONDITION_PREFIX } from '../utils/utils';
+import { catchError } from 'rxjs/operators';
 
 @Injectable()
 export class WeatherService {
@@ -12,7 +15,9 @@ export class WeatherService {
   static URL = 'http://api.openweathermap.org/data/2.5';
   static APPID = '5a4b2d457ecbef9eb2a71e480b947604';
   static ICON_URL = 'https://raw.githubusercontent.com/udacity/Sunshine-Version-2/sunshine_master/app/src/main/res/drawable-hdpi/';
+
   private currentConditions = signal<ConditionsAndZip[]>([]);
+  private storageService = inject(StorageService);
 
   constructor(private http: HttpClient) { }
 
@@ -28,10 +33,36 @@ export class WeatherService {
   }
 
   addCurrentConditions(zipcode: string): void {
+    console.log('--------------NEW ADD CALL---------------');
+    const keyValue = this.storageService.generateConcatKeyValue(zipcode, CURRENT_CONDITION_PREFIX);
+    if (this.storageService.isCurrentConditionInLocalAndValid(zipcode)) {
+      const existingCurrentCondition = JSON.parse(this.storageService.getDataFromLocal(keyValue));
+
+      this.currentConditions.mutate((conditions) => {
+        conditions.push({ zip: zipcode, ...existingCurrentCondition });
+        console.log('conditions filled by local storage: ', conditions);
+      });
+    } else {
     // Here we make a request to get the current conditions data from the API. Note the use of backticks and an expression to insert the zipcode
-    this.http.get<CurrentConditions>(`${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`)
-      .subscribe(data => this.currentConditions.mutate(conditions => conditions.push({ zip: zipcode, data })));
-  }
+      this.http.get<CurrentConditions>(`${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`)
+        .pipe(
+          catchError((error: HttpErrorResponse) => {
+            // Handle the error
+            console.error('HTTP Error Catched: ', error);
+            return throwError(error);
+          })
+        )
+        .subscribe(data => {
+          // Handle successful
+          this.storageService.setDataInLocalWithTime(keyValue, data);
+
+          this.currentConditions.mutate(conditions => {
+            conditions.push({ zip: zipcode, data });
+            console.log('conditions filled by http: ', conditions);
+          });
+        });
+    }
+  };
 
   removeCurrentConditions(zipcode: string) {
     this.currentConditions.mutate(conditions => {
