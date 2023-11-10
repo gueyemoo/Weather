@@ -1,3 +1,3 @@
-<div [hidden]="!active" class="tab">
-  <ng-content></ng-content>
+<div [hidden]="!active" class="tabShown">
+  <ng-container [ngTemplateOutlet]="content" [ngTemplateOutletContext]="{$implicit: singleData}"></ng-container>
 </div>

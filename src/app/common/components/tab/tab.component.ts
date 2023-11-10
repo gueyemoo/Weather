@@ -1,13 +1,22 @@
-import { Component, Input, TemplateRef } from '@angular/core';
+import { Component, Input, TemplateRef, Type } from '@angular/core';
 
 @Component({
   selector: 'app-tab',
   templateUrl: './tab.component.html',
   styleUrls: ['./tab.component.css']
 })
-export class TabComponent {
+export class TabComponent<Type> {
 
-  @Input() title: string;
-  @Input() active = false;
+  @Input()
+  title: string | TemplateRef<any>;
+
+  @Input()
+  content: TemplateRef<any>;
+
+  @Input()
+  singleData: Type;
+
+  @Input()
+  active = false;
 
 }
