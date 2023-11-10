@@ -6,6 +6,7 @@ import { LocationService } from "../../../common/services/location.service";
   templateUrl: './zipcode-entry.component.html'
 })
 export class ZipcodeEntryComponent {
+  zipcodeInput: string = '';
 
   constructor(private service: LocationService) { }
 
