@@ -1,5 +1,13 @@
 <app-tab-list (removeTab)="removeCurrentCondition($event)">
-  <app-tab *ngFor="let location of currentConditionsByZip()" [title]="location.data.name">
+  <app-tab 
+    *ngFor="let location of currentConditionsByZip()" 
+    [title]="getLocationTitle(location)" 
+    [singleData]="location"
+    [content]="weatherTemplate">
+  </app-tab>
+</app-tab-list>
+
+<ng-template #weatherTemplate let-location>
     <div class="well flex" (click)="showForecast(location.zip)">
       <div>
         <h3>{{ location.data.name }} ({{ location.zip }})</h3>
@@ -22,5 +30,16 @@
         />
       </div>
     </div>
-  </app-tab>
-</app-tab-list>
+</ng-template>
+
+
+<!-- TEST TEMPLATE CONTEXT FOR SAME COMP -->
+<!-- <app-tab-list>
+  <app-tab title="Hello, Click me" [content]="presentationTemplate"> </app-tab>
+  <ng-template #presentationTemplate>
+    <span><h1>Greetings</h1></span> <br>
+    <p>My name is Mohamed GUEYE. </p> <br>
+    <p>I love to code and I am really excited by angular 17, nice to meet you.</p> <br>
+    <p>Have a nice day :)</p> 
+  </ng-template>
+</app-tab-list> -->
