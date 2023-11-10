@@ -2,5 +2,10 @@ import { CurrentConditions } from '../../components/main-page/current-conditions
 
 export interface ConditionsAndZip {
     zip: string;
+    data: CurrentConditions | CurrentConditionsWithTimestamp;
+}
+
+export interface CurrentConditionsWithTimestamp {
     data: CurrentConditions;
+    timestamp: number;
 }
