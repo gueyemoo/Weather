@@ -1,5 +1,5 @@
 import { Injectable, Signal, inject, signal } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
+import { Observable, Subject, of, throwError } from 'rxjs';
 
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CurrentConditions } from '../../components/main-page/current-conditions/current-conditions.type';
@@ -7,7 +7,7 @@ import { ConditionsAndZip } from '../types/conditions-and-zip.type';
 import { Forecast } from '../../components/forecasts-list/forecast.type';
 import { StorageService } from './storage.service';
 import { CURRENT_CONDITION_PREFIX, CURRENT_FORECAST_PREFIX } from '../utils/utils';
-import { catchError, tap } from 'rxjs/operators';
+import { catchError, takeUntil, tap } from 'rxjs/operators';
 
 @Injectable()
 export class WeatherService {
@@ -19,6 +19,7 @@ export class WeatherService {
   private currentConditions = signal<ConditionsAndZip[]>([]);
   private storageService = inject(StorageService);
   private timeout = this.storageService.getTimeoutExpiration();
+  private _destroyed$: Subject<void> = new Subject<void>();
 
   constructor(private http: HttpClient) { }
 
@@ -49,9 +50,10 @@ export class WeatherService {
         .pipe(
           catchError((error: HttpErrorResponse) => {
             // Handle the error
-            console.error('HTTP Error Catched: ', error);
+            console.error('HTTP Error has been catched');
             return throwError(error);
-          })
+          }),
+          takeUntil(this._destroyed$)
         )
         .subscribe(data => {
           // Handle successful
@@ -113,4 +115,11 @@ export class WeatherService {
       return WeatherService.ICON_URL + "art_clear.png";
   }
 
+  /**
+  * @description Unsubscribe to prevent any memory leak
+  */
+  ngOnDestroy() {
+    this._destroyed$.next();
+    this._destroyed$.complete();
+  }
 }
