@@ -8,9 +8,11 @@ import { CURRENT_CONDITION_PREFIX } from '../utils/utils';
 
 export class StorageService {
 
+  defaultTimeout: number = 0.5;
+
   constructor() { }
 
-  setDataInLocal(keyValue: string, data: string): void {
+  setDataInLocal(keyValue: string, data: any): void {
     localStorage.setItem(keyValue, data);
   }
 
@@ -60,17 +62,16 @@ export class StorageService {
 
   /**
    * @description Check if the keyvalue based on zipcode exist in local storage and 
-   * the keyvalue is still valid regarding expiration time 
-   * @param zipcode 
-   * @param timeExpiration //TODO: add it later 
+   * if the keyvalue is still valid regarding expiration time 
+   * @param keyValue keyvalue stored in local storage
+   * @param timeExpiration optionnal parameter to set the time before keyValue expire
    * @returns 
    */
-  isCurrentConditionInLocalAndValid(zipcode: string): boolean {
-    const keyValue = this.generateConcatKeyValue(zipcode, CURRENT_CONDITION_PREFIX);
+  isKeyInLocalAndValid(keyValue: string, timeExpiration: number = this.defaultTimeout): boolean {
     const currentCondition = this.getDataFromLocal(keyValue);
 
     if (currentCondition) { //if key exist in local storage check if it is expired
-      if (!this.isDataExpired(keyValue, 0.5)) {//30 sec test
+      if (!this.isDataExpired(keyValue, timeExpiration)) {//30 sec test
         console.log('Data not expired ! retrieve value for ', keyValue, ' in local storage');
         return true;
       } else { //if key expired we remove it from local storage
@@ -80,8 +81,18 @@ export class StorageService {
       }
     }
 
-    console.log('key for ', zipcode, ' does not exist');
+    console.log('key for ', keyValue, ' does not exist');
     return false; //key does not exist in local storage
   }
 
+  /**
+   * @description retrieve the time setted by user for expiration of a keyvalue
+   */
+  getTimeoutExpiration(): number {
+    const timeout = this.getDataFromLocal('timeout')
+    if (timeout) {
+      return JSON.parse(timeout);
+    }
+    return this.defaultTimeout;
+  }
 }

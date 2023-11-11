@@ -1,13 +1,13 @@
 import { Injectable, Signal, inject, signal } from '@angular/core';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CurrentConditions } from '../../components/main-page/current-conditions/current-conditions.type';
 import { ConditionsAndZip } from '../types/conditions-and-zip.type';
 import { Forecast } from '../../components/forecasts-list/forecast.type';
 import { StorageService } from './storage.service';
-import { CURRENT_CONDITION_PREFIX } from '../utils/utils';
-import { catchError } from 'rxjs/operators';
+import { CURRENT_CONDITION_PREFIX, CURRENT_FORECAST_PREFIX } from '../utils/utils';
+import { catchError, tap } from 'rxjs/operators';
 
 @Injectable()
 export class WeatherService {
@@ -18,6 +18,7 @@ export class WeatherService {
 
   private currentConditions = signal<ConditionsAndZip[]>([]);
   private storageService = inject(StorageService);
+  private timeout = this.storageService.getTimeoutExpiration();
 
   constructor(private http: HttpClient) { }
 
@@ -33,9 +34,9 @@ export class WeatherService {
   }
 
   addCurrentConditions(zipcode: string): void {
-    console.log('--------------NEW ADD CALL---------------');
+    console.log('--------------NEW GET CONDITION CALL---------------');
     const keyValue = this.storageService.generateConcatKeyValue(zipcode, CURRENT_CONDITION_PREFIX);
-    if (this.storageService.isCurrentConditionInLocalAndValid(zipcode)) {
+    if (this.storageService.isKeyInLocalAndValid(keyValue, this.timeout)) {
       const existingCurrentCondition = JSON.parse(this.storageService.getDataFromLocal(keyValue));
 
       this.currentConditions.mutate((conditions) => {
@@ -78,8 +79,20 @@ export class WeatherService {
   }
 
   getForecast(zipcode: string): Observable<Forecast> {
-    // Here we make a request to get the forecast data from the API. Note the use of backticks and an expression to insert the zipcode
-    return this.http.get<Forecast>(`${WeatherService.URL}/forecast/daily?zip=${zipcode},us&units=imperial&cnt=5&APPID=${WeatherService.APPID}`);
+    console.log('--------------NEW GET FORECAST CALL---------------');
+    const keyValue = this.storageService.generateConcatKeyValue(zipcode, CURRENT_FORECAST_PREFIX);
+    if (this.storageService.isKeyInLocalAndValid(keyValue, this.timeout)) {
+      const localForecast = JSON.parse(this.storageService.getDataFromLocal(keyValue));
+      console.log('forecast filled by local storage: ', localForecast.data);
+      return of(localForecast.data);
+    } else {
+      // Here we make a request to get the forecast data from the API. Note the use of backticks and an expression to insert the zipcode
+      return this.http.get<Forecast>(`${WeatherService.URL}/forecast/daily?zip=${zipcode},us&units=imperial&cnt=5&APPID=${WeatherService.APPID}`)
+        .pipe(tap(data => {
+          console.log('forecast filled by https: ', data);
+          this.storageService.setDataInLocalWithTime(keyValue, data);
+        }));
+    }
 
   }
 
