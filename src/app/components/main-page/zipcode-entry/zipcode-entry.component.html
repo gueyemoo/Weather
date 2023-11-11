@@ -1,8 +1,15 @@
 <div class="well">
   <h2>Enter a zipcode:</h2>
-  <input type="text" #zipcode [(ngModel)]="zipcodeInput" placeholder="Zipcode" class="form-control">
+  <input type="number" #zipcode placeholder="Zipcode" class="form-control">
   <br>
-  <button class="btn btn-primary" (click)="addLocation(zipcode.value)" [disabled]="!zipcodeInput">
+  <button class="btn btn-primary" (click)="addLocation(zipcode.value)" [disabled]="!zipcode.value">
     Add location
   </button>
+  <h2>Enter a timeout (minutes):</h2>
+    <input type="number" #timeout placeholder="timeout for cache in minutes" [value]="defaultTimeoutValue" class="form-control">
+  <br>
+  <button class="btn btn-primary" (click)="saveTimeout(timeout.value)">
+    Save timeout
+  </button>
+  <br>
 </div>

@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { LocationService } from "../../../common/services/location.service";
+import { StorageService } from 'app/common/services/storage.service';
 
 @Component({
   selector: 'app-zipcode-entry',
@@ -8,10 +9,22 @@ import { LocationService } from "../../../common/services/location.service";
 export class ZipcodeEntryComponent {
   zipcodeInput: string = '';
 
-  constructor(private service: LocationService) { }
+  defaultTimeoutValue: number;
+
+  private storageService = inject(StorageService);
+  private location = inject(LocationService);
+
+  constructor() {
+    this.defaultTimeoutValue = JSON.parse(this.storageService.getDataFromLocal('timeout'))
+      || this.storageService.defaultTimeout;
+  }
 
   addLocation(zipcode: string) {
-    this.service.addLocation(zipcode);
+    this.location.addLocation(zipcode);
+  }
+
+  saveTimeout(timeout: number) {
+    this.storageService.setDataInLocal('timeout', timeout);
   }
 
 }
