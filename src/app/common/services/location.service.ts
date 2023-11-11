@@ -21,7 +21,7 @@ export class LocationService {
 
   addLocation(zipcode : string) {
     if (this.locations.includes(zipcode)) {
-      return alert('Location exist');
+      return alert('This location is already in the tabs');
     }
     this.locations.push(zipcode);
     localStorage.setItem(LOCATIONS, JSON.stringify(this.locations));

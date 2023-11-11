@@ -7,7 +7,7 @@
       <ng-template #displayTemplate>
         <ng-container [ngTemplateOutlet]="tab.title"></ng-container>
       </ng-template>
-      <button class="close-icon" (click)="closeTab(currentTab, $event)">X</button>
+      <button class="close-icon" (click)="closeTab(currentTab)">X</button>
     </li>
   </ul>
   <ng-content></ng-content>

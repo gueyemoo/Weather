@@ -34,6 +34,11 @@ export class WeatherService {
     }
   }
 
+  /**
+   * @description Add the current condition either from the local storage or from the API
+   * if the data do not exist in the local storage and is valid
+   * @param zipcode 
+   */
   addCurrentConditions(zipcode: string): void {
     console.log('--------------NEW GET CONDITION CALL---------------');
     const keyValue = this.storageService.generateConcatKeyValue(zipcode, CURRENT_CONDITION_PREFIX);
@@ -49,14 +54,14 @@ export class WeatherService {
       this.http.get<CurrentConditions>(`${WeatherService.URL}/weather?zip=${zipcode},us&units=imperial&APPID=${WeatherService.APPID}`)
         .pipe(
           catchError((error: HttpErrorResponse) => {
-            // Handle the error
+            // Handle the error from the API
             console.error('HTTP Error has been catched');
             return throwError(error);
           }),
           takeUntil(this._destroyed$)
         )
         .subscribe(data => {
-          // Handle successful
+          // Handle successful request from the API
           this.storageService.setDataInLocalWithTime(keyValue, data);
 
           this.currentConditions.mutate(conditions => {
@@ -80,6 +85,11 @@ export class WeatherService {
     return this.currentConditions.asReadonly();
   }
 
+  /**
+   * @description retrieve the forecast data from the local storage or the API
+   * if the data is not already in the local storage and valid
+   * @param zipcode 
+   */
   getForecast(zipcode: string): Observable<Forecast> {
     console.log('--------------NEW GET FORECAST CALL---------------');
     const keyValue = this.storageService.generateConcatKeyValue(zipcode, CURRENT_FORECAST_PREFIX);

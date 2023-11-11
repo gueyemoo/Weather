@@ -39,10 +39,8 @@ export class TabListComponent implements AfterContentChecked {
   /**
    * @description allow to close the tab on click
    * @param clickedTabIndex index of selected tab by user
-   * @param event pointer event click
    */
-  public closeTab(clickedTabIndex: number, event: PointerEvent) {
-    event.stopPropagation(); //prevent to propagate click to activate tab
+  public closeTab(clickedTabIndex: number) {
     this.removeTab.emit(clickedTabIndex);
   }
 

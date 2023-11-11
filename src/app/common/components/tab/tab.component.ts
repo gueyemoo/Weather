@@ -8,13 +8,13 @@ import { Component, ElementRef, Input, TemplateRef, Type, inject } from '@angula
 export class TabComponent<Type> {
 
   @Input()
-  title: string | TemplateRef<any>;
+  title: string | TemplateRef<any>; //to put a string or a template as title of tab
 
   @Input()
-  content: TemplateRef<any>;
+  content: TemplateRef<any>; //to put a template as the content of tab
 
   @Input()
-  singleData: Type;
+  singleData: Type; //to pass data to a template content
 
-  elementRef = inject(ElementRef); //use pf elementRef to display or not tab
+  elementRef = inject(ElementRef); //use of elementRef to display or not tab
 }

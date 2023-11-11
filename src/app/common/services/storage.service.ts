@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CURRENT_CONDITION_PREFIX } from '../utils/utils';
+import { CURRENT_CONDITION_PREFIX, TIMEOUT_LOCALSTORAGE_KEY } from '../utils/utils';
 
 
 @Injectable({
@@ -25,6 +25,12 @@ export class StorageService {
 
   }
 
+  /**
+   * @description put the data in localStorage with an additionnal attribute
+   * to determine at which time it was put in the localStorage
+   * @param keyValue 
+   * @param data 
+   */
   setDataInLocalWithTime(keyValue: string, data: any): void {
     const currentTime = new Date().getTime();
     const dataWithTimestamp = { data, timestamp: currentTime };
@@ -32,10 +38,21 @@ export class StorageService {
     localStorage.setItem(keyValue, JSON.stringify(dataWithTimestamp));
   }
 
+  /**
+   * @description generate a concatenation of two input in order to set a new keyValue
+   *  format of keyvallue (e.g: prefix:zipcode => Toto:1000)
+   * @param zipcode 
+   * @param prefix 
+   */
   generateConcatKeyValue(zipcode: string, prefix: string) {
     return `${prefix}:${zipcode}`
   }
 
+  /**
+   * @description return if the value in local storage is expired or not
+   * @param keyValue keyValue used to stock in local storage
+   * @param timeoutInMinutes user timeout for a data to be expired
+   */
   isDataExpired(keyValue: string, timeoutInMinutes: number): boolean {
     const storedData = this.getDataFromLocal(keyValue);
 
@@ -49,7 +66,7 @@ export class StorageService {
       // 60 is number of second in one minute
       const timeDifferenceInMinutes = (currentTime - dataTimestamp) / (1000 * 60);
 
-      // Check if the data is expired
+      // return if the data is expired
       console.log('timeDiff in minutes for(', keyValue, ') : ', timeDifferenceInMinutes);
       console.log('timeout in minutes set by user: ', timeoutInMinutes);
       console.log(keyValue + ' is expired ? ' + (timeDifferenceInMinutes > timeoutInMinutes))
@@ -64,24 +81,23 @@ export class StorageService {
    * @description Check if the keyvalue based on zipcode exist in local storage and 
    * if the keyvalue is still valid regarding expiration time 
    * @param keyValue keyvalue stored in local storage
-   * @param timeExpiration optionnal parameter to set the time before keyValue expire
-   * @returns 
+   * @param timeExpiration (optionnal parameter) to set the time before keyValue expire
    */
   isKeyInLocalAndValid(keyValue: string, timeExpiration: number = this.defaultTimeout): boolean {
     const currentCondition = this.getDataFromLocal(keyValue);
 
     if (currentCondition) { //if key exist in local storage check if it is expired
-      if (!this.isDataExpired(keyValue, timeExpiration)) {//30 sec test
-        console.log('Data not expired ! retrieve value for ', keyValue, ' in local storage');
+      if (!this.isDataExpired(keyValue, timeExpiration)) {
+        console.log('Data not expired ! retrieve value for ', keyValue, ' in local storage.');
         return true;
       } else { //if key expired we remove it from local storage
-        console.log('Data expired ! removing key ', keyValue, ' and API will be requested');
+        console.log('Data expired ! removing key ', keyValue, ' and API will be requested.');
         this.removeDataFromLocal(keyValue);
         return false;
       }
     }
 
-    console.log('key for ', keyValue, ' does not exist');
+    console.log('key for ', keyValue, ' does not exist in local storage.');
     return false; //key does not exist in local storage
   }
 
@@ -89,7 +105,7 @@ export class StorageService {
    * @description retrieve the time setted by user for expiration of a keyvalue
    */
   getTimeoutExpiration(): number {
-    const timeout = this.getDataFromLocal('timeout')
+    const timeout = this.getDataFromLocal(TIMEOUT_LOCALSTORAGE_KEY)
     if (timeout) {
       return JSON.parse(timeout);
     }

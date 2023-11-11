@@ -6,6 +6,7 @@ import { ConditionsAndZip } from '../../../common/types/conditions-and-zip.type'
 import { Subject } from 'rxjs';
 import { takeUntil } from "rxjs/operators";
 import { StorageService } from 'app/common/services/storage.service';
+import { SELECTED_TAB_LOCALSTORAGE_KEY } from 'app/common/utils/utils';
 
 @Component({
   selector: 'app-current-conditions',
@@ -27,14 +28,14 @@ export class CurrentConditionsComponent implements OnInit, OnDestroy {
 
   //Set getter and setter for custom two way data binding selectedTab
   public get selectedTabIndex(): number {
-    return JSON.parse(this.storageService.getDataFromLocal('selectedTab'));
+    return JSON.parse(this.storageService.getDataFromLocal(SELECTED_TAB_LOCALSTORAGE_KEY));
   }
   public set selectedTabIndex(userTabSelected: number) {
-    this.storageService.setDataInLocal('selectedTab', userTabSelected);
+    this.storageService.setDataInLocal(SELECTED_TAB_LOCALSTORAGE_KEY, userTabSelected);
   }
 
   /**
-  * @description listen to locations and load current conditions from service
+  * @description listen to locations and load current conditions from weather service
   */
   private loadLocationsChange(): void {
     this.locationService.locations$

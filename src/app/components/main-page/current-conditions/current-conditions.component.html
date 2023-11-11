@@ -34,13 +34,35 @@
 </ng-template>
 
 
-<!-- TEST TEMPLATE CONTEXT FOR SAME COMP -->
+<!-- TEST ANOTHER CONTEXT FOR SAME COMPONENT -->
+
+<!-- UNCOMMENT BELOW CODE TO TEST -->
 <!-- <app-tab-list>
   <app-tab title="Hello, Click me" [content]="presentationTemplate"> </app-tab>
-  <ng-template #presentationTemplate>
+</app-tab-list> -->
+<!-- UNCOMMENT ABOVE CODE TO TEST -->
+
+
+<!-- TEST ANOTHER CONTEXT FOR SAME COMPONENT WITH TITLE AS A TEMPLATE AS WELL -->
+
+<!-- UNCOMMENT BELOW CODE TO TEST -->
+<!-- <app-tab-list>
+  <app-tab [title]="customTitle" [content]="presentationTemplate"> </app-tab>
+</app-tab-list> -->
+<!-- UNCOMMENT ABOVE CODE TO TEST -->
+
+<!-- FOR TEST PURPOSE OF COMMENTED CODE ABOVE (DO NOT TOUCH PLEASE) -->
+<ng-template #customTitle>
+  <div style="display: flex; flex-direction: column;">
+    <h4>Let your imagination do the rest</h4> <br>
+    <h7>I handle the tabs ;)</h7>
+  </div>
+</ng-template>
+
+<ng-template #presentationTemplate>
     <span><h1>Greetings</h1></span> <br>
     <p>My name is Mohamed GUEYE. </p> <br>
     <p>I love to code and I am really excited by angular 17, nice to meet you.</p> <br>
     <p>Have a nice day :)</p> 
-  </ng-template>
-</app-tab-list> -->
+</ng-template>
+
