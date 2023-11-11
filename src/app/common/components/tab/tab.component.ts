@@ -1,4 +1,4 @@
-import { Component, Input, TemplateRef, Type } from '@angular/core';
+import { Component, ElementRef, Input, TemplateRef, Type, inject } from '@angular/core';
 
 @Component({
   selector: 'app-tab',
@@ -16,7 +16,5 @@ export class TabComponent<Type> {
   @Input()
   singleData: Type;
 
-  @Input()
-  active = false;
-
+  elementRef = inject(ElementRef); //use pf elementRef to display or not tab
 }
