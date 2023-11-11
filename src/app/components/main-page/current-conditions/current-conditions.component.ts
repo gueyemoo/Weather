@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { ConditionsAndZip } from '../../../common/types/conditions-and-zip.type';
 import { Subject } from 'rxjs';
 import { takeUntil } from "rxjs/operators";
+import { StorageService } from 'app/common/services/storage.service';
 
 @Component({
   selector: 'app-current-conditions',
@@ -15,12 +16,21 @@ export class CurrentConditionsComponent implements OnInit, OnDestroy {
 
   private weatherService = inject(WeatherService);
   private router = inject(Router);
+  private storageService = inject(StorageService);
   private _destroyed$: Subject<void> = new Subject<void>();
   protected locationService = inject(LocationService);
   protected currentConditionsByZip: Signal<ConditionsAndZip[]> = this.weatherService.getCurrentConditions();
 
   ngOnInit(): void {
     this.loadLocationsChange();
+  }
+
+  //Set getter and setter for custom two way data binding selectedTab
+  public get selectedTabIndex(): number {
+    return JSON.parse(this.storageService.getDataFromLocal('selectedTab'));
+  }
+  public set selectedTabIndex(userTabSelected: number) {
+    this.storageService.setDataInLocal('selectedTab', userTabSelected);
   }
 
   /**
@@ -40,7 +50,6 @@ export class CurrentConditionsComponent implements OnInit, OnDestroy {
   public removeCurrentCondition(tabIndex: number): void {
     const filteredZipcode = this.currentConditionsByZip()[tabIndex].zip;
     this.locationService.removeLocation(filteredZipcode);
-    this.weatherService.removeCurrentConditions(filteredZipcode);
   }
 
   public showForecast(zipcode: string): void {

@@ -1,6 +1,6 @@
 <div class="tabs-container">
   <ul class="nav nav-tabs">
-    <li *ngFor="let tab of tabs; index as currentTab" class="tab" [ngClass]="{'active': tab.active === true }" (click)="selectTab(currentTab)">
+    <li *ngFor="let tab of tabs; index as currentTab" class="tab" [ngClass]="{'active': currentTab === selectedTab }" (click)="selectTab(currentTab)">
       <ng-container *ngIf="isString(tab.title); else displayTemplate">
         <p class="title">{{ tab.title }}</p>
       </ng-container>

@@ -1,4 +1,5 @@
-<app-tab-list (removeTab)="removeCurrentCondition($event)">
+<app-tab-list (removeTab)="removeCurrentCondition($event)"
+[(selectedTab)]="selectedTabIndex">
   <app-tab 
     *ngFor="let location of currentConditionsByZip()" 
     [title]="getLocationTitle(location)" 
