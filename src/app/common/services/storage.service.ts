@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { CURRENT_CONDITION_PREFIX, TIMEOUT_LOCALSTORAGE_KEY } from '../utils/utils';
+import { CurrentConditions } from 'app/components/main-page/current-conditions/current-conditions.type';
+import { Forecast } from 'app/components/forecasts-list/forecast.type';
 
 
 @Injectable({
@@ -12,7 +14,7 @@ export class StorageService {
 
   constructor() { }
 
-  setDataInLocal(keyValue: string, data: any): void {
+  setDataInLocal(keyValue: string, data: string): void {
     localStorage.setItem(keyValue, data);
   }
 
@@ -31,7 +33,7 @@ export class StorageService {
    * @param keyValue 
    * @param data 
    */
-  setDataInLocalWithTime(keyValue: string, data: any): void {
+  setDataInLocalWithTime(keyValue: string, data: CurrentConditions | Forecast): void {
     const currentTime = new Date().getTime();
     const dataWithTimestamp = { data, timestamp: currentTime };
 

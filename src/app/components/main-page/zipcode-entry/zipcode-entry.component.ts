@@ -33,7 +33,7 @@ export class ZipcodeEntryComponent {
    * @param timeout 
    */
   saveTimeout(timeout: number) {
-    this.storageService.setDataInLocal(TIMEOUT_LOCALSTORAGE_KEY, timeout);
+    this.storageService.setDataInLocal(TIMEOUT_LOCALSTORAGE_KEY, timeout.toString());
   }
 
 }

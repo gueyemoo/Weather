@@ -60,7 +60,7 @@ export class WeatherService {
           }),
           takeUntil(this._destroyed$)
         )
-        .subscribe(data => {
+        .subscribe((data: CurrentConditions) => {
           // Handle successful request from the API
           this.storageService.setDataInLocalWithTime(keyValue, data);
 
@@ -100,7 +100,7 @@ export class WeatherService {
     } else {
       // Here we make a request to get the forecast data from the API. Note the use of backticks and an expression to insert the zipcode
       return this.http.get<Forecast>(`${WeatherService.URL}/forecast/daily?zip=${zipcode},us&units=imperial&cnt=5&APPID=${WeatherService.APPID}`)
-        .pipe(tap(data => {
+        .pipe(tap((data: Forecast) => {
           console.log('forecast filled by https: ', data);
           this.storageService.setDataInLocalWithTime(keyValue, data);
         }));

@@ -7,6 +7,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from "rxjs/operators";
 import { StorageService } from 'app/common/services/storage.service';
 import { SELECTED_TAB_LOCALSTORAGE_KEY } from 'app/common/utils/utils';
+import { CurrentConditions } from './current-conditions.type';
 
 @Component({
   selector: 'app-current-conditions',
@@ -31,7 +32,7 @@ export class CurrentConditionsComponent implements OnInit, OnDestroy {
     return JSON.parse(this.storageService.getDataFromLocal(SELECTED_TAB_LOCALSTORAGE_KEY));
   }
   public set selectedTabIndex(userTabSelected: number) {
-    this.storageService.setDataInLocal(SELECTED_TAB_LOCALSTORAGE_KEY, userTabSelected);
+    this.storageService.setDataInLocal(SELECTED_TAB_LOCALSTORAGE_KEY, userTabSelected.toString());
   }
 
   /**
@@ -57,7 +58,7 @@ export class CurrentConditionsComponent implements OnInit, OnDestroy {
     this.router.navigate(['/forecast', zipcode])
   }
 
-  public getLocationTitle(location: any): string {
+  public getLocationTitle(location: { zip: string, data: CurrentConditions }): string {
     return `${location.data.name} (${location.zip})`;
   }
 
