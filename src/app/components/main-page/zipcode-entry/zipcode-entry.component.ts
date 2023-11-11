@@ -20,7 +20,9 @@ export class ZipcodeEntryComponent {
   }
 
   addLocation(zipcode: string) {
-    this.location.addLocation(zipcode);
+    if (zipcode !== '') {
+      this.location.addLocation(zipcode);
+    }
   }
 
   saveTimeout(timeout: number) {
